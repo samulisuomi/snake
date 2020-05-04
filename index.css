@@ -1,0 +1,15 @@
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.cell {
+  display: flex;
+  height: 30px;
+  width: 30px;
+  background: #adb7aa;
+}
+
+.cell.t, .cell.b, .cell.h {
+  background: #2e342d;
+}
