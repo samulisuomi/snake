@@ -1,3 +1,7 @@
+body {
+  padding: 15px;
+}
+
 .row {
   display: flex;
   justify-content: center;
@@ -5,11 +9,27 @@
 
 .cell {
   display: flex;
-  height: 30px;
-  width: 30px;
+  height: 32px;
+  width: 32px;
   background: #adb7aa;
 }
 
 .cell.snake {
   background: #2e342d;
+}
+
+.keyboard {
+  user-select: none;
+  touch-action: manipulation;
+  margin-top: 15px;
+}
+
+.keyboard .row div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 64px;
+  width: 96px;
+  background: #f3f3f3;
+  border: 8px solid white;
 }

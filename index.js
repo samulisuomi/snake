@@ -62,22 +62,48 @@ this.moveSnake = () => {
   this.field[nextHeadY][nextHeadX] = 1
 }
 
+this.onMouseDown = event => {
+  switch (event.target.textContent) {
+    case '2':
+      return this.onNewDirection('u')
+    case '6':
+      return this.onNewDirection('r')
+    case '8':
+      return this.onNewDirection('d')
+    case '4':
+      return this.onNewDirection('l')
+  }
+}
+
 this.onKeyDown = event => {
   switch (event.code) {
     case 'ArrowUp':
     case 'KeyW':
-      if (this.direction !== 'd') this.setDirection('u')
-      break
+      return this.onNewDirection('u')
     case 'ArrowRight':
     case 'KeyD':
-      if (this.direction !== 'l') this.setDirection('r')
-      break
+      return this.onNewDirection('r')
     case 'ArrowDown':
     case 'KeyS':
-      if (this.direction !== 'u') this.setDirection('d')
-      break
+      return this.onNewDirection('d')
     case 'ArrowLeft':
     case 'KeyA':
+      return this.onNewDirection('l')
+  }
+}
+
+this.onNewDirection = newDirection => {
+  switch (newDirection) {
+    case 'u':
+      if (this.direction !== 'd') this.setDirection('u')
+      break
+    case 'r':
+      if (this.direction !== 'l') this.setDirection('r')
+      break
+    case 'd':
+      if (this.direction !== 'u') this.setDirection('d')
+      break
+    case 'l':
       if (this.direction !== 'r') this.setDirection('l')
       break
   }
@@ -108,7 +134,7 @@ this.endGame = () => {
 }
 
 this.draw = () => {
-  const containerElement = document.querySelector('#snake')
+  const containerElement = document.querySelector('.snake')
   containerElement.textContent = ''
 
   this.field.forEach(row => {
@@ -128,6 +154,7 @@ this.draw = () => {
 
 window.addEventListener('DOMContentLoaded', _event => {
   this.draw()
-  document.addEventListener('keydown', this.onKeyDown);
+  document.querySelector('.keyboard').addEventListener('mousedown', this.onMouseDown)
+  document.addEventListener('keydown', this.onKeyDown)
   setInterval(this.onTick, 200)
 })
