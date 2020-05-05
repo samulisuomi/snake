@@ -1,7 +1,7 @@
 this.field = [
-  [5,0,0,0,0,0,0,0,0,0],
-  [4,0,0,0,0,0,0,0,0,0],
-  [3,2,1,0,0,0,0,0,0,0],
+  [3,0,0,0,0,0,0,0,0,0],
+  [2,0,0,0,0,0,0,0,0,0],
+  [1,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0],
@@ -15,12 +15,14 @@ this.width = this.field[0].length
 this.height = this.field.length
 
 this.direction = 'r'
+this.nextDirectionCandidate = null
 this.length = 5
 this.headY = 2
-this.headX = 2
+this.headX = 0
 this.tailY = 0
 this.tailX = 0
 this.gameOver = false
+this.directionUpdatedThisTick = false
 
 window.foo = this
 
@@ -60,14 +62,49 @@ this.moveSnake = () => {
   this.field[nextHeadY][nextHeadX] = 1
 }
 
+this.onKeyDown = event => {
+  switch (event.code) {
+    case 'ArrowUp':
+    case 'KeyW':
+      if (this.direction !== 'd') this.setDirection('u')
+      break
+    case 'ArrowRight':
+    case 'KeyD':
+      if (this.direction !== 'l') this.setDirection('r')
+      break
+    case 'ArrowDown':
+    case 'KeyS':
+      if (this.direction !== 'u') this.setDirection('d')
+      break
+    case 'ArrowLeft':
+    case 'KeyA':
+      if (this.direction !== 'r') this.setDirection('l')
+      break
+  }
+}
+
+this.setDirection = newDirection => {
+  // TODO: Buffer direction updates
+  if (this.directionUpdatedThisTick) return
+
+  this.directionUpdatedThisTick = true
+  this.direction = newDirection
+}
+
 this.onTick = () => {
+  this.directionUpdatedThisTick = false
+  if (this.nextDirectionCandidate) {
+    this.direction = this.nextDirectionCandidate
+    this.nextDirectionCandidate = null
+  }
   if (!this.gameOver) this.moveSnake()
   this.draw()
 }
 
 this.endGame = () => {
   this.gameOver = true
-  alert('Game Over')
+  // alert('Game over')
+  console.log('Game over')
 }
 
 this.draw = () => {
@@ -91,5 +128,6 @@ this.draw = () => {
 
 window.addEventListener('DOMContentLoaded', _event => {
   this.draw()
-  setInterval(this.onTick, 500)
+  document.addEventListener('keydown', this.onKeyDown);
+  setInterval(this.onTick, 200)
 })
