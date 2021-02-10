@@ -1,30 +1,94 @@
-this.field = [
-  [3,0,0,0,0,0,0,0,0,0],
-  [2,0,0,0,0,0,0,0,0,0],
-  [1,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-]
-
-this.width = this.field[0].length
-this.height = this.field.length
-
-this.direction = 'r'
-this.nextDirectionCandidate = null
-this.length = 5
-this.headY = 2
-this.headX = 0
-this.tailY = 0
-this.tailX = 0
-this.gameOver = false
-this.directionUpdatedThisTick = false
-
 window.foo = this
+
+this.initialize = () => {
+  this.field = [
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,1,'l','l','l',0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+  ]
+  
+  this.width = this.field[0].length
+  this.height = this.field.length
+  
+  this.inputBuffer = []
+  this.direction = 'r'
+  this.headY = 8
+  this.headX = 1
+  this.tailY = 0
+  this.tailX = 0
+  this.gameOver = false
+}
+
+this.onMouseDown = event => {
+  switch (event.target.textContent) {
+    case '2':
+      return this.addInputToBuffer('u')
+    case '6':
+      return this.addInputToBuffer('r')
+    case '8':
+      return this.addInputToBuffer('d')
+    case '4':
+      return this.addInputToBuffer('l')
+    default:
+      if (this.gameOver) {
+        this.initialize()
+      }
+  }
+}
+
+this.onKeyDown = event => {
+  switch (event.code) {
+    case 'ArrowUp':
+    case 'KeyW':
+      return this.addInputToBuffer('u')
+    case 'ArrowRight':
+    case 'KeyD':
+      return this.addInputToBuffer('r')
+    case 'ArrowDown':
+    case 'KeyS':
+      return this.addInputToBuffer('d')
+    case 'ArrowLeft':
+    case 'KeyA':
+      return this.addInputToBuffer('l')
+    default:
+      if (this.gameOver) {
+        this.initialize()
+      }
+  }
+}
+
+this.addInputToBuffer = direction => {
+  const previousInput = this.inputBuffer[this.inputBuffer.length - 1] || this.direction
+  switch (direction) {
+    case 'u':
+      if (previousInput !== 'u' && previousInput !== 'd') {
+        this.inputBuffer = [...this.inputBuffer, direction]
+      }
+      break
+    case 'r':
+      if (previousInput !== 'r' && previousInput !== 'l') {
+        this.inputBuffer = [...this.inputBuffer, direction]
+      }
+      break
+    case 'd':
+      if (previousInput !== 'd' && previousInput !== 'u') {
+        this.inputBuffer = [...this.inputBuffer, direction]
+      }
+      break
+    case 'l':
+      if (previousInput !== 'l' && previousInput !== 'r') {
+        this.inputBuffer = [...this.inputBuffer, direction]
+      }
+      break
+  }
+}
 
 this.nextHeadY = () => {
   switch(this.direction) {
@@ -56,72 +120,20 @@ this.moveSnake = () => {
     return this.endGame()
   }
 
+  // TODO: Check if the snake would collide
+
   this.headY = nextHeadY
   this.headX = nextHeadX
 
   this.field[nextHeadY][nextHeadX] = 1
 }
 
-this.onMouseDown = event => {
-  switch (event.target.textContent) {
-    case '2':
-      return this.onNewDirection('u')
-    case '6':
-      return this.onNewDirection('r')
-    case '8':
-      return this.onNewDirection('d')
-    case '4':
-      return this.onNewDirection('l')
-  }
-}
-
-this.onKeyDown = event => {
-  switch (event.code) {
-    case 'ArrowUp':
-    case 'KeyW':
-      return this.onNewDirection('u')
-    case 'ArrowRight':
-    case 'KeyD':
-      return this.onNewDirection('r')
-    case 'ArrowDown':
-    case 'KeyS':
-      return this.onNewDirection('d')
-    case 'ArrowLeft':
-    case 'KeyA':
-      return this.onNewDirection('l')
-  }
-}
-
-this.onNewDirection = newDirection => {
-  switch (newDirection) {
-    case 'u':
-      if (this.direction !== 'd') this.setDirection('u')
-      break
-    case 'r':
-      if (this.direction !== 'l') this.setDirection('r')
-      break
-    case 'd':
-      if (this.direction !== 'u') this.setDirection('d')
-      break
-    case 'l':
-      if (this.direction !== 'r') this.setDirection('l')
-      break
-  }
-}
-
-this.setDirection = newDirection => {
-  // TODO: Buffer direction updates
-  if (this.directionUpdatedThisTick) return
-
-  this.directionUpdatedThisTick = true
-  this.direction = newDirection
-}
-
 this.onTick = () => {
-  this.directionUpdatedThisTick = false
-  if (this.nextDirectionCandidate) {
-    this.direction = this.nextDirectionCandidate
-    this.nextDirectionCandidate = null
+  if (this.inputBuffer.length) {
+    const [firstInput, ...otherInputs] = this.inputBuffer
+
+    this.direction = firstInput
+    this.inputBuffer = otherInputs
   }
   if (!this.gameOver) this.moveSnake()
   this.draw()
@@ -129,7 +141,6 @@ this.onTick = () => {
 
 this.endGame = () => {
   this.gameOver = true
-  // alert('Game over')
   console.log('Game over')
 }
 
@@ -153,6 +164,7 @@ this.draw = () => {
 }
 
 window.addEventListener('DOMContentLoaded', _event => {
+  this.initialize()
   this.draw()
   document.querySelector('.keyboard').addEventListener('mousedown', this.onMouseDown)
   document.addEventListener('keydown', this.onKeyDown)
