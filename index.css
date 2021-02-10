@@ -5,17 +5,70 @@ body {
 .row {
   display: flex;
   justify-content: center;
+  flex-wrap: nowrap;
 }
 
-.cell {
+.cell, .border-cell {
+  flex-shrink: 0;
   display: flex;
-  height: 32px;
-  width: 32px;
+  height: 18px;
+  width: 18px;
   background: #adb7aa;
 }
 
-.cell.snake {
-  background: #2e342d;
+.cell.snake, .border-cell {
+  background-size: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.cell.snake.d-dl-du {
+  background-image: url("./assets/tiles/snake/d-dl-du.png")
+}
+
+.cell.snake.l-lu-u {
+  background-image: url("./assets/tiles/snake/l-lu-u.png")
+}
+
+.cell.snake.lr-r-ru {
+  background-image: url("./assets/tiles/snake/lr-r-ru.png")
+}
+
+.cell.snake.dr {
+  background-image: url("./assets/tiles/snake/dr.png")
+}
+
+.border-cell.top {
+  background-image: url("./assets/tiles/border/top.png")
+}
+
+.border-cell.top-left {
+  background-image: url("./assets/tiles/border/top-left.png")
+}
+
+.border-cell.top-right {
+  background-image: url("./assets/tiles/border/top-right.png")
+}
+
+.border-cell.left {
+  background-image: url("./assets/tiles/border/left.png")
+}
+
+.border-cell.right {
+  background-image: url("./assets/tiles/border/right.png")
+}
+
+.border-cell.bottom {
+  background-image: url("./assets/tiles/border/bottom.png")
+}
+
+.border-cell.bottom-left {
+  background-image: url("./assets/tiles/border/bottom-left.png")
+}
+
+.border-cell.bottom-right {
+  background-image: url("./assets/tiles/border/bottom-right.png")
 }
 
 .keyboard {
