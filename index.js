@@ -173,6 +173,7 @@ this.getTileName = directions => {
   }
 }
 
+// TODO: Use canvas + https://developer.mozilla.org/en-US/docs/Games/Techniques/Crisp_pixel_art_look :
 this.draw = () => {
   const containerElement = document.querySelector('.snake')
   containerElement.textContent = ''
