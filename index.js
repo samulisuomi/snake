@@ -13,7 +13,10 @@ this.initialize = () => {
   this.tailY = this.headY
   this.tailX = 0
   for (let i = this.tailX; i <= this.headX; i++) {
-    this.field[this.tailY][i] = i === this.headX ? 'l' : 'lr'
+    this.field[this.tailY][i] =
+      i === this.headX ?
+        "l" : i === this.tailX ?
+          "r" : "lr"
   }
 
   this.inputBuffer = []
@@ -52,6 +55,8 @@ this.onKeyDown = event => {
     case 'ArrowLeft':
     case 'KeyA':
       return this.addInputToBuffer('l')
+    case 'Enter':
+      debugger
     default:
       if (this.gameOver) {
         this.initialize()
@@ -100,7 +105,27 @@ this.nextHeadX = () => {
   }
 }
 
+this.nextTailY = direction => {
+  switch(direction) {
+    case 'u':
+      return this.tailY - 1
+    case 'd':
+      return this.tailY + 1
+    default:
+      return this.tailY
+  }
+}
 
+this.nextTailX = direction => {
+  switch(direction) {
+    case 'l':
+      return this.tailX - 1
+    case 'r':
+      return this.tailX + 1
+    default:
+      return this.tailX
+  }
+}
 
 this.getInvertedDirection = direction => {
   switch(direction) {
@@ -123,7 +148,13 @@ this.moveSnake = () => {
     return this.endGame()
   }
 
+  if (this.field[nextHeadY][nextHeadX] /* && !(nextHeadY === this.tailY && nextHeadX === this.tailX) */) {
+    return this.endGame()
+  }
+
   // TODO: Check if the snake would collide
+
+  // Update the head:
 
   const oldHeadX = this.headX
   const oldHeadY = this.headY
@@ -133,7 +164,25 @@ this.moveSnake = () => {
   this.field[oldHeadY][oldHeadX] = [this.field[oldHeadY][oldHeadX], this.direction].sort().join('')
   this.field[this.headY][this.headX] = this.getInvertedDirection(this.direction)
 
+  // Update the tail:
+  const oldTailX = this.tailX
+  const oldTailY = this.tailY
+  const oldTailDirection = this.field[this.tailY][this.tailX]
+  const invertedOldTailDirection = this.getInvertedDirection(oldTailDirection)
 
+  const nextTailX = this.nextTailX(oldTailDirection)
+  const nextTailY = this.nextTailY(oldTailDirection)
+  this.tailX = nextTailX
+  this.tailY = nextTailY
+
+  if (!(this.headX === oldTailX && this.headY === oldTailY)) {
+    this.field[oldTailY][oldTailX] = 0
+  }
+  // if (!this.field[this.tailY][this.tailX]) {
+  //   debugger
+  // }
+
+  this.field[this.tailY][this.tailX] = this.field[this.tailY][this.tailX].split('').filter(direction => direction !== invertedOldTailDirection).join('')
 }
 
 this.onTick = () => {
@@ -249,5 +298,5 @@ window.addEventListener('DOMContentLoaded', _event => {
   this.draw()
   document.querySelector('.keyboard').addEventListener('mousedown', this.onMouseDown)
   document.addEventListener('keydown', this.onKeyDown)
-  setInterval(this.onTick, 200)
+  setInterval(this.onTick, 500)
 })
